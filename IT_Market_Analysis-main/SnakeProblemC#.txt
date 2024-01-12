@@ -1,0 +1,115 @@
+// Online C# Editor for free
+// Write, Edit and Run your C# code using C# Online Compiler
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+class Solution {
+    
+
+    static void Main(String[] args) {
+        Console.WriteLine("Input the size of the Matrix: ");
+        int n = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Input the direction of the Wind: ");
+        char d = Convert.ToChar(Console.ReadLine());
+        Console.WriteLine("Input the starting position: ");
+        string[] tokens_x = Console.ReadLine().Split(' ');
+        int x = Convert.ToInt32(tokens_x[0]);
+        int y = Convert.ToInt32(tokens_x[1]);
+
+        int[,] matrix = new int[n,n];
+        int[] Priority_Set = new int[4];
+        int trail=1;
+        matrix[x,y]=1;
+        Priority_Set = Priority_Manager(d);
+        
+        // Main loop :
+        while(trail<n*n) {
+            Snake_Movement_Controller(Priority_Set,ref matrix, ref x, ref y, ref trail,n);
+        }
+        
+        Console.WriteLine("Result: ");
+        Print_Matrix(matrix);
+
+        
+    } 
+    static void Snake_Movement_Controller(int[] priorities,ref int[,] matrix,ref int x,ref int y,ref int trail, int n) { 
+        
+        // [Up, Right, Left, Down]
+        int[] possible_directions = new int[]{0,0,0,0};
+        
+        if(x-1 >= 0 && matrix[x-1,y]==0 ){possible_directions[0]=1;} // {up = true;}
+        if(x+1 < n && matrix[x+1,y]==0 ){possible_directions[3]=1;} // {down = true;}
+        if(y-1 >= 0 && matrix[x,y-1]==0 ){possible_directions[2]=1;} // {left = true;}
+        if(y+1 < n && matrix[x,y+1]==0 ){possible_directions[1]=1;} //{right = true;}
+        
+        if(priorities[0]==1){
+            if(possible_directions[0]==1){x = x-1;}
+            else if(possible_directions[1]==1){y = y+1;}
+            else if(possible_directions[2]==1){y = y-1;}
+            else if(possible_directions[3]==1) {x = x+1;}
+            else {Console.WriteLine("No Possible Movement.");}
+            
+        }else if(priorities[1]==1){
+            if(possible_directions[1]==1){y = y+1;}
+            else if(possible_directions[0]==1){x = x-1;}
+            else if(possible_directions[3]==1){x = x+1;}
+            else if(possible_directions[2]==1){y = y-1;}
+            else {Console.WriteLine("No Possible Movement.");}
+           
+            
+        }else if(priorities[2]==1){
+            if(possible_directions[2]==1){y = y-1;}
+            else if(possible_directions[0]==1){x = x-1;}
+            else if(possible_directions[3]==1){x = x+1;}
+            else if(possible_directions[1]==1){y = y+1;}
+            else {Console.WriteLine("No Possible Movement.");}
+            
+            
+        }else if(priorities[3]==1){
+            if(possible_directions[3]==1){x = x+1;}
+            else if(possible_directions[1]==1){y = y+1;}
+            else if(possible_directions[2]==1){y = y-1;}
+            else if(possible_directions[0]==1){x = x-1;}
+            else {Console.WriteLine("No Possible Movement.");}
+            
+        }
+        matrix[x,y]=++trail;
+        
+        
+    }
+    static void Print_Matrix(int[,] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); i++){
+            for (int j = 0; j < matrix.GetLength(1); j++){
+                Console.Write(matrix[i, j] + " ");
+            }
+            Console.WriteLine(" | ");
+        }
+    }
+    static int[] Priority_Manager(char direction) {
+        //[North, East, West, South]
+        switch (direction)
+        {
+            case 'n':
+                return new int[] {1,0,0,-1};
+                break;
+
+            case 's':
+                return new int[] {-1,0,0,1};
+                break;
+
+            case 'e':
+                return new int[] {0,1,-1,0};
+                break;
+            case 'w':
+                return new int[] {0,-1,1,0};
+                break;
+
+            default:
+                Console.WriteLine("Error in the Priority Manager");
+                return new int[] {0,0,0,0};
+                break;
+        }
+    }
+}
